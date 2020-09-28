@@ -10,6 +10,8 @@ const outputPath = path.join(OUTPUT_DIR, "team.html");
 
 const render = require("./lib/htmlRenderer");
 const { SSL_OP_SSLREF2_REUSE_CERT_TYPE_BUG } = require("constants");
+const Employee = require("./lib/Employee");
+const { error } = require("console");
 const specializedQuestions = {
     Manager: {
         type: "input",
@@ -82,21 +84,38 @@ function init() {
                     }).then(() => {
                         inquirer.prompt(actualQuestions)
                             .then((res) => {
-                                employees.push(role, res);
+                                const employee = createEmployee(role, res);
+                                employees.push(employee);
                                 console.log(employees);
                                 init();
                             })
                     })
 
             } else {
-                
+                fs.writeFile("MyEmployees.html", render(employees), (err) => {
+                    if(err) {
+                        throw err;
+                    }
+                });
             }
         })
 }
 
+function createEmployee(role, data) {
+    if (role === "Manager") {
+        return new Manager(data.name, data.id, data.email, data.officeNumber);
+    } else if (role === "Engineer") {
+        return new Engineer(data.name, data.id, data.email, data.github);
+    } else if (role === "Intern"){
+        return new Intern(data.name, data.id, data.email, data.school);
+    } else {
+        throw "Role is not valid."
+    }
+}
+
+
 init();
 
-render([]);
 
 
 // Write code to use inquirer to gather information about the development team members,

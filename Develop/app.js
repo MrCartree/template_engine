@@ -82,10 +82,14 @@ function init() {
                     }).then(() => {
                         inquirer.prompt(actualQuestions)
                             .then((res) => {
-                                console.log(res);
+                                employees.push(role, res);
+                                console.log(employees);
+                                init();
                             })
                     })
 
+            } else {
+                
             }
         })
 }
